@@ -1,0 +1,71 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using ClientDependency.Core.Mvc
+
+@{
+    Layout = null;
+
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+    Html.RequiresCss("~/vendor/bootstrap/css/bootstrap.min.css");
+    Html.RequiresCss("~/vendor/fontawesome-free/css/all.min.css");
+    Html.RequiresCss("~/css/site.css");
+    Html.RequiresCss("~/css/prettify.css");
+
+    Html.RequiresJs("~/vendor/jquery/jquery.min.js");
+    Html.RequiresJs("~/vendor/bootstrap/js/bootstrap.bundle.min.js");
+    Html.RequiresJs("~/scripts/jquery.validate.min.js");
+    Html.RequiresJs("~/scripts/jquery.validate.unobtrusive.min.js");
+    Html.RequiresJs("~/scripts/jquery.unobtrusive-ajax.min.js");
+    Html.RequiresJs("~/scripts/run_prettify.js?skin=sunburst");
+    Html.RequiresJs("~/scripts/site.js");
+    Html.RequiresJs("~/scripts/effect_loading.js");
+    Html.RequiresJs("~/vendor/less/less.js");
+    Html.RequiresJs("~/vendor/jquery/jquery.lazy.min.js");
+}
+
+<!DOCTYPE html>
+<html lang="@System.Threading.Thread.CurrentThread.CurrentCulture">
+<head>
+    @Html.Partial("~/Views/Partials/metaData.cshtml")
+    @Html.RenderCssHere()
+
+    <link href="~/css/site.less" rel="stylesheet/less" type="text/css" />
+</head>
+<body>
+    <div class="cssload-container">
+        <div class="cssload-zenith"></div>
+    </div>
+    <div class="alert alert-success alert-dismissible send-message-success" role="alert">
+        @Umbraco.GetDictionaryValue("SuccessMessage.Contact")
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    @Html.Partial("~/Views/Partials/mainNavigation.cshtml")
+    <main>
+        @RenderBody()
+        @Html.Partial("~/Views/Partials/Footer.cshtml")
+    </main>
+    @Html.RenderJsHere()
+    @{
+        var settings = (Settings)Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias.Equals("settings"));
+        if (!string.IsNullOrEmpty(settings.GoogleAnalyticsID))
+        {
+            <!-- Global site tag (gtag.js) - Google Analytics -->
+            <script type="text/javascript" async src="//www.googletagmanager.com/gtag/js?id=@settings.GoogleAnalyticsID"></script>
+            <script type="text/javascript">
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+            gtag('config', '@settings.GoogleAnalyticsID');
+            </script>
+        }
+        <script type="text/javascript">
+             $(document).ready(function() {
+                $('.list-gallery').find('.slick-prev').html('<i class="ic-icon"></i>' + '@Umbraco.GetDictionaryValue("Paging.Previous").ToFirstUpper()');
+                $('.list-gallery').find('.slick-next').html('@Umbraco.GetDictionaryValue("Next").ToFirstUpper()' + '<i class="ic-icon"></i>');
+             });
+        </script>
+    }
+</body>
+</html>

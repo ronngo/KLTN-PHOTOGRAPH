@@ -1,0 +1,37 @@
+﻿@inherits UmbracoViewPage<_21_CS_NH.ViewModel.PageHeaderViewModel>
+@{
+    string mainImageUrl = Model.HasBackgroundImage ? Model.BackgroundImage.LocalCrops.Src : "/media/banner.png";
+}
+
+<header class="masthead lazy-bg" style="background-image: url('@mainImageUrl?format=webp&width=1920');">
+    @if (Model.Alias != "home")
+    {
+        <div class="overlay"></div>
+    }
+<div class="container banner-new">
+    @if (Model.Alias != "home")
+    {
+        <div class="row h-100">
+                <div class="col-12 mx-auto title-banner">
+                    <div class="site-heading">
+                        <h1 class="text-truncate-4">@Umbraco.GetDictionaryValue("Article.TitleQuite")</h1>
+
+                        @if (Model.IsNews)
+                        {
+                            <span class="subheading">
+                                @Umbraco.GetDictionaryValue("Article.Posted")
+                                @if (Model.HasAuthor)
+                                {
+                                    @Umbraco.GetDictionaryValue("Article.By")@:&nbsp;@Model.AuthorName
+                                }
+                                @Umbraco.GetDictionaryValue("Article.On")@Html.Raw("&nbsp;")@Model.CreateDate.Value.ToString("MMMM dd, yyyy")
+                            </span>
+                        }
+                   
+                </div>
+            </div>
+            </div>}
+        </div>
+    
+
+</header>

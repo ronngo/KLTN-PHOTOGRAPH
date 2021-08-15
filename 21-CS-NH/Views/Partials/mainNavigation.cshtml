@@ -1,0 +1,113 @@
+﻿@inherits UmbracoViewPage
+
+@{
+    var homePage = Model.AncestorOrSelf<Home>();
+    var settings = (Settings)Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias == "settings");
+    var newsList = UmbracoContext.Content.GetAtRoot().DescendantsOrSelf<NewsList>().FirstOrDefault();
+    var currentCulture = System.Globalization.CultureInfo.CurrentCulture;
+}
+<nav class="navbar navbar-expand-lg navbar-light fixed-top lazy-bg" id="mainNav">
+    <div class="container nav-mobile">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="d-lg-none d-block text-center w-100">
+            @if (settings?.Logo != null)
+            {
+                <a class="navbar-brand" href="@homePage.Url()"><img data-loading="lazy" src="~/Media/blank.png?format=webp&width=134" data-src="@settings.Logo.LocalCrops.Src?format=webp&width=134" alt="@settings.SiteName" /></a>
+            }
+            else
+            {
+                <a class="navbar-brand" href="@homePage.Url()">@(settings?.SiteName)</a>
+            }
+        </div>
+        <div class="d-lg-none d-block language language-mobile">
+            <div class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-uppercase" href="#" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="~/Media/flag-@(currentCulture.Name.ToLower()).png?format=webp&width=24" /><span>@currentCulture.Name</span>
+                </a>
+                @if (Model.Cultures.Count() > 1)
+                {
+                    <div class="dropdown-menu">
+                        @foreach (var (culture, info) in Model.Cultures)
+                        {
+                            if (culture.ToLower() != currentCulture.Name.ToLower())
+                            {
+                                string url = Model.Url(culture);
+                                if (url != "#")
+                                {
+                                    <a class="dropdown-item text-uppercase" href="@url"><img src="~/Media/flag-@(culture).png?format=webp&width=24" /><span> @culture</span></a>}
+                            }
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="@homePage.Url()">@Umbraco.GetDictionaryValue("Home").ToFirstUpper()</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@homePage.Url()#story">@Umbraco.GetDictionaryValue("WeAs").ToFirstUpper()</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@homePage.Url()#album">@Umbraco.GetDictionaryValue("Album").ToFirstUpper()</a>
+                </li>
+                <li class="nav-item logo-active__hidden">
+                    @if (settings?.Logo != null)
+                    {
+                        <a class="navbar-brand" href="@homePage.Url()"><img data-loading="lazy" src="~/Media/blank.png?format=webp&width=134" data-src="@settings.Logo.LocalCrops.Src?format=webp&width=134" alt="@settings.SiteName" /></a>
+                    }
+                    else
+                    {
+                        <a class="navbar-brand" href="@homePage.Url()">@(settings?.SiteName)</a>
+                    }
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@homePage.Url()#work">@Umbraco.GetDictionaryValue("Work").ToFirstUpper()</a>
+                </li>
+                <li class="nav-item">
+                    @if (newsList != null)
+                    {
+                        if (Model.Id == newsList.Id)
+                        {
+                            <a class="nav-link" href="@Model.Url()">@Umbraco.GetDictionaryValue("Quote").ToFirstUpper()</a>
+                        }
+                        else if (Model.Parent?.Id == newsList.Id)
+                        {
+                            <a class="nav-link" href="@Model.Parent.Url()">@Umbraco.GetDictionaryValue("Quote").ToFirstUpper()</a>
+                        }
+                        else
+                        {
+                            <a class="nav-link" href="@homePage.Url()#latest-news">@Umbraco.GetDictionaryValue("Quote").ToFirstUpper()</a>
+                        }
+                    }
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Request.RawUrl#contact">@Umbraco.GetDictionaryValue("Contact").ToFirstUpper()</a>
+                </li>
+                <li class="nav-item dropdown d-lg-block d-none">
+                    <a class="nav-link dropdown-toggle text-uppercase" href="#" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img src="~/Media/flag-@(currentCulture.Name.ToLower()).png?format=webp&width=24" /><span>@currentCulture.Name</span>
+                    </a>
+                    @if (Model.Cultures.Count() > 1)
+                    {
+                        <div class="dropdown-menu">
+                            @foreach (var (culture, info) in Model.Cultures)
+                            {
+                                if (culture.ToLower() != currentCulture.Name.ToLower())
+                                {
+                                    string url = Model.Url(culture);
+                                    if (url != "#")
+                                    {
+                                        <a class="dropdown-item text-uppercase" href="@url"><img src="~/Media/flag-@(culture).png?format=webp&width=24" /><span> @culture</span></a>}
+                                }
+                            }
+                        </div>
+                    }
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

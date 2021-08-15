@@ -1,0 +1,40 @@
+﻿@inherits UmbracoViewPage<_21_CS_NH.ViewModel.ContactViewModel>
+
+<div id="form-outer">
+    @using (Html.BeginUmbracoForm("Contact", "Contact", FormMethod.Post))
+    {
+        <div class="control-group">
+            <div class="form-group">
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control value-form", placeholder = @Umbraco.GetDictionaryValue("Common.Name") })
+                @Html.ValidationMessageFor(m => m.Name)
+                <p class="help-block text-danger"></p>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="form-group">
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control value-form", placeholder = @Umbraco.GetDictionaryValue("Common.Email") })
+                @Html.ValidationMessageFor(m => m.Email)
+                <p class="help-block text-danger"></p>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="form-group">
+                @Html.TextBoxFor(m => m.Phone, new { @class = "form-control value-form", placeholder = @Umbraco.GetDictionaryValue("Common.Phone") })
+                @Html.ValidationMessageFor(m => m.Phone)
+                <p class="help-block text-danger"></p>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="form-group">
+                @Html.TextAreaFor(m => m.Message, new { @class = "form-control value-form", placeholder = @Umbraco.GetDictionaryValue("Common.Message"), rows = "6" })
+                @Html.ValidationMessageFor(m => m.Message)
+                <p class="help-block text-danger"></p>
+            </div>
+        </div>
+        <div class="control-group">
+            <button type="submit" class="btn btn-primary" disabled>
+                @Umbraco.GetDictionaryValue("Common.Send")
+            </button>
+        </div>
+    }
+</div>

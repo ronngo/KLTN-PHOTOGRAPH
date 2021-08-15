@@ -1,0 +1,52 @@
+stages:
+  - deploy
+
+variables:
+  NUGET_PATH: 'C:\Nuget\nuget.exe'
+  MSBUILD_PATH: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\msbuild.exe'
+  DOTNET_PATH: 'C:\Program Files\dotnet\dotnet.exe'
+
+before_script:
+  - '& "$NUGET_PATH" restore 21-CS-NH.sln'
+
+deploy_develop:
+  stage: deploy
+  script:
+    - '& "$MSBUILD_PATH" "21-CS-NH\21-CS-NH.csproj" /p:PublishProfile=Development /p:DeployOnBuild=true /p:Configuration=Debug'
+    # deviceless connection
+    - '& net use $DEV_DEST /user:$DEV_USER_NAME $DEV_PASSWORD'
+    #Copy files and subfolders to deployment folder
+    - '& robocopy.exe ".\21-CS-NH\obj\Development" "$DEV_DEST" *.* /XO /E /R:3 /W:10; if($lastexitcode -lt 8) {Out-Host;$?}'
+    - '& net use "$DEV_DEST" /delete'
+  tags:
+    - windows-runner-90
+  only:
+    - develop
+    
+deploy_stg:
+  stage: deploy
+  script:
+    - '& "$MSBUILD_PATH" "21-CS-NH\21-CS-NH.csproj" /p:PublishProfile=Staging /p:DeployOnBuild=true /p:Configuration=Release'
+    # deviceless connection
+    - '& net use $STG_DEST /user:$DEV_USER_NAME $DEV_PASSWORD'
+    #Copy files and subfolders to deployment folder
+    - '& robocopy.exe ".\21-CS-NH\obj\Staging" "$STG_DEST" *.* /XO /E /R:3 /W:10; if($lastexitcode -lt 8) {Out-Host;$?}'
+    - '& net use "$STG_DEST" /delete'
+  tags:
+    - windows-runner-90
+  only:
+    - master
+  # when: manual
+
+
+# deploy_prod:
+#   stage: deploy
+#   script:
+#     - '& "$MSBUILD_PATH" "21-CS-NH\21-CS-NH.csproj" /p:PublishProfile=Production /p:DeployOnBuild=true /p:Configuration=Release'
+#     # deviceless connection
+#     - '& net use $PROD_DEST /user:$PROD_USER_NAME $PROD_PASSWORD'
+#     #Copy files and subfolders to deployment folder
+#     - '& robocopy.exe ".\21-CS-NH\obj\Production" "$PROD_DEST" *.* /XO /E /R:3 /W:10; if($lastexitcode -lt 8) {Out-Host;$?}'
+#     - '& net use "$PROD_DEST" /delete'
+#   only:
+#     - master

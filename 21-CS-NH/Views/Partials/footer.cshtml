@@ -1,0 +1,49 @@
+﻿@inherits UmbracoViewPage
+
+@{
+    var homePage = Model.AncestorOrSelf<Home>();
+    var settings = (Settings)Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias == "settings");
+
+    Contacts contact = Model.Root().DescendantsOrSelf<Contacts>().FirstOrDefault();
+}
+@if (contact != null)
+{
+    string title = !string.IsNullOrWhiteSpace(contact.Title) ? contact.Title : contact.Name;
+
+    <section id="contact" class="lazy-bg">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="contact-title">
+                    @title
+                </h2>
+            </div>
+            <div class="row">
+                <div class="offset-lg-1 col-lg-11 col-12">
+                    <div class="row">
+                        <div class="col-md-6 col-12">
+                            @{ Html.RenderAction("RenderContact", "Contact"); }
+                        </div>
+                        <div class="col-md-6 col-12">
+                            @foreach (var item in settings.ContactLinks)
+                            {
+                                <p class="sociali-link">
+                                    <img class="icon" data-loading="lazy" src="~/Media/blank.png?format=webp&width=120" data-src="@item.Logo.LocalCrops.Src?format=webp&width=120" alt="@item.Link.Name"/>
+                                    <a class="font_text contact-title" href="@item.Link.Url" target="@item.Link.Target">@item.Link.Name</a>
+                                </p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+<footer>
+    <div class="text-footer">
+        <span class="text-footer1">© @Umbraco.GetDictionaryValue("Footer.Text1")</span>
+        <span class="text-footer2">@Umbraco.GetDictionaryValue("Footer.Text2") <i class="fa fa-heart" /></i></span>
+    </div>
+    <div class="back-to-top">
+        <div class="back-to-top-icon"><i class="fas fa-arrow-up"></i></div>
+    </div>
+</footer>

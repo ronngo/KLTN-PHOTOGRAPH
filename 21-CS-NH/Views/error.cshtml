@@ -1,0 +1,20 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<Error>
+@using _21_CS_NH.ViewModel;
+@{
+    Layout = "Master.cshtml";
+    var home = (Home)Model.Root();
+    var error = (Error)home.Children.FirstOrDefault(x => x.ContentType.Alias.Equals("error"));
+}
+
+@Html.Partial("~/Views/Partials/pageHeader.cshtml", new PageHeaderViewModel(Model.Name, Model.Title, Model.MainImage))
+<article>
+    <div class="col-lg-8 m-auto">
+        <p class="breadcrumb01"><a href="@home.Url">@home.Title</a><span> / </span><span class="activated">@error.Title</span></p>
+    </div>
+
+    <div class="container">
+        <div class="col-lg-8 col-md-10 col-12 m-auto">
+            @Html.Raw(Model.MainContent)
+        </div>
+    </div>
+</article>

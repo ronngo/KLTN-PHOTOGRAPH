@@ -1,0 +1,52 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<NewsList>
+@using _21_CS_NH.ViewModel
+@using _21_CS_NH.Infrastructure
+@{
+    Layout = "Master.cshtml";
+    string title = !string.IsNullOrWhiteSpace(Model.Title) ? Model.Title : Model.Name;
+
+    var home = (Home)Model.Root();
+    var newbreacumb = (NewsList)home.Children.FirstOrDefault(x => x.ContentType.Alias.Equals("newsList"));
+    var fallbackPageSize = Convert.ToInt32(Model.PageSize);
+    var pageSize = QueryStringHelper.GetIntFromQueryString(Request, "size", fallbackPageSize);
+    var pageNumber = QueryStringHelper.GetIntFromQueryString(Request, "page", 1);
+
+    var allNews = Model.Children<News>().Where(x => x.IsVisible()).OrderByDescending(x => x.CreateDate);
+    var pageOfNews = allNews.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+    var totalItemCount = allNews.Count();
+    var pageCount = totalItemCount > 0 ? Math.Ceiling((double)totalItemCount / pageSize) : 1;
+}
+@Html.Partial("~/Views/Partials/pageHeader.cshtml", new PageHeaderViewModel(Model.Name, Model.Title, Model.MainImage))
+
+<section id="list-news">
+    <div class="container">
+        <p class="breadcrumb01"><a href="@home.Url">@home.Title</a><span> / </span><span class="activated">@Umbraco.GetDictionaryValue("Article.TitleQuite")</span></p>
+        <div class="row">
+            @foreach (News news in pageOfNews)
+            {
+                string itemImageUrl = news.MainImage != null ? news.MainImage.LocalCrops.Src : "/media/default.png?format=webp&width=350";
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="post-preview">
+                        <div class="ratio">
+                            <a href="@news.Url">
+                                <img data-loading="lazy" src="~/Media/blank.png?format=webp&width=350" data-src="@itemImageUrl" alt="@news.Name" />
+                            </a>
+                        </div>
+
+                        <a href="@news.Url">
+                            <h3 class="post-title text-truncate-2">
+                                @(!string.IsNullOrWhiteSpace(news.Title) ? news.Title : news.Name)
+                            </h3>
+                        </a>
+                        <p class="post-meta text-truncate-5">
+                            @news.Subtitle
+                        </p>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @Html.Partial("~/Views/Partials/Pagination.cshtml", Model, new ViewDataDictionary { { "PageSize", pageSize }, { "PageNumber", pageNumber } })
+    </div>
+
+</section>

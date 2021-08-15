@@ -1,0 +1,62 @@
+﻿@inherits UmbracoViewPage
+@{
+    NewsList newsList = Model.Root().DescendantsOrSelf<NewsList>().FirstOrDefault();
+    IEnumerable<News> latestNews;
+}
+
+@if (newsList != null)
+{
+    string title = !string.IsNullOrWhiteSpace(newsList.Title) ? newsList.Title : newsList.Name;
+    if (Model.ContentType.Alias.Equals("news"))
+    {
+        latestNews = newsList.Children<News>().Where(x => x.IsVisible() && x.Id != Model.Id).OrderByDescending(x => x.CreateDate).Take(3);
+    }
+    else
+    {
+        latestNews = newsList.Children<News>().Where(x => x.IsVisible()).OrderByDescending(x => x.CreateDate).Take(3);
+    }
+    <section id="latest-news" class="lazy-bg">
+        <div class="container">
+            <div class="text-center">
+                @if (Model.ContentType.Alias.Equals("news"))
+                {
+                    <h2 class="latest-title">
+                        @Umbraco.GetDictionaryValue("Article.LatestNews")
+                    </h2>
+                }
+                else
+                {
+                    <h2 class="">
+                        @Umbraco.GetDictionaryValue("Quote")
+                    </h2>
+                }
+            </div>
+            <div class="row">
+                @foreach (var news in latestNews)
+                {
+                    string itemImageUrl = news.MainImage != null ? news.MainImage.LocalCrops.Src : "/media/default.png?format=webp&width=350";
+                    <div class="col-12 col-md-6 col-lg-4 news-item">
+                        <div class="post-preview">
+                            <div class="ratio">
+                                <a href="@news.Url">
+                                    <img data-loading="lazy" src="~/Media/blank.png?format=webp&width=350" data-src="@itemImageUrl" alt="@news.Name" />
+                                </a>
+                            </div>
+                            <a href="@news.Url">
+                                <h3 class="post-title text-truncate-2">
+                                    @(!string.IsNullOrWhiteSpace(news.Title) ? news.Title : news.Name)
+                                </h3>
+                            </a>
+                            <p class="post-meta text-truncate-5">
+                                @news.Subtitle
+                            </p>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="text-center w-100">
+                <a class="show-all" href="@(newsList.Url)"><i class="fa fa-plus">@Umbraco.GetDictionaryValue("ArticleList.ViewAll")</i></a>
+            </div>
+        </div>
+    </section>
+}

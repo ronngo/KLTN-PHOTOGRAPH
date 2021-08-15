@@ -1,0 +1,201 @@
+﻿@inherits UmbracoViewPage
+@{
+    var album = (AlbumList)Model.Children.FirstOrDefault(x => x.ContentType.Alias.Equals("albumList"));
+}
+
+@if (album != null)
+{
+    string title = !string.IsNullOrWhiteSpace(album.Title) ? album.Title : album.Name;
+    var albumItems = album.Children.ToList();
+    int sliderImages = album.AlbumCount;
+
+    <section id="album" class="lazy-bg Gallery wow fadeIn work-3col work-with-title gutter  no-padding-bottom">
+        <div class="container">
+            <!-- section title -->
+            <div class="row">
+                <!-- section title -->
+                <h2 class="col-12 text-center">
+                    @title
+                </h2>
+                <!-- end section title -->
+            </div>
+            <!-- end section title -->
+        </div>
+        <div class="container">
+            <div class="row margin-nine no-margin-lr no-margin-bottom">
+                <div class="col-md-12 center-col margin-lr-auto text-center margin-seven no-margin-lr no-margin-top sm-padding-nine sm-no-margin-lr sm-no-padding-top xs-padding-two xs-no-margin-lr xs-no-padding-top">
+                    <!-- filter navigation -->
+                    <ul class="portfolio-filter portfolio-filter-tab-style-3 letter-spacing-1 xs-margin-eleven xs-no-margin-lr">
+                        @{
+                            if (albumItems != null && albumItems.Any())
+                            {
+                                foreach (Album item in albumItems)
+                                {
+                                    <li class="xs-display-inline"><span>@item.Title</span></li>
+                                }
+                            }
+                        }
+                    </ul>
+                    <!-- end filter navigation -->
+                </div>
+            </div>
+            <div class="d-desktop">
+                <div class="list-gallery">
+                    @{
+                        if (albumItems != null && albumItems.Any())
+                        {
+                            foreach (Album item in albumItems)
+                            {
+                                var sumGalleryImages = item.ListImage.ToList(); ;
+                                var sumGridGallery = Math.Ceiling(Convert.ToDecimal(sumGalleryImages.Count) / sliderImages);
+                                var sunGalleryUrl = sumGalleryImages.Select(x => x.LocalCrops.Src).ToList();
+                                var galleryJson = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(sunGalleryUrl);
+                                int index = 0;
+                                <div class="grid-gallery">
+
+                                    @for (int i = 1; i <= sumGridGallery; i++)
+                                    {
+                                        int numberOfGallerys = 0;
+                                        numberOfGallerys = sliderImages;
+                                        if (numberOfGallerys >= sumGalleryImages.Count())
+                                        {
+                                            numberOfGallerys = sumGalleryImages.Count();
+                                        }
+                                        var pagedGallerysItem = sumGalleryImages.Skip((i - 1) * sliderImages).Take(numberOfGallerys).ToList();
+                                        <div class="gallery-item">
+                                            <ul class="gallery-item-list">
+                                                <!-- packages item -->
+                                                @{
+                                                    int order = 1;
+
+                                                }
+                                                @foreach (var urlGallery in pagedGallerysItem)
+                                                {
+                                                    string cropImages = "gallery";
+                                                    if (order % 2 == 0)
+                                                    {
+                                                        cropImages = "galleryImages";
+                                                    }
+                                                    <li class="liveshow gallery-item gallery-@(index)">
+                                                        <span class="lazy-bg gallery-img work-details-popup" data-list-image="@(galleryJson)" data-idx="@index">
+                                                            <img class="lazyload" data-loading="lazy" src="~/Media/loading.gif" data-src="@(urlGallery?.GetLocalCropUrl(cropImages))" alt="" />
+                                                        </span>
+                                                    </li>
+                                                    order++;
+                                                    index++;
+                                                }
+
+                                                <!-- end packages item -->
+
+                                            </ul>
+                                        </div>
+                                    }
+
+                                </div>
+
+                            }
+                        }
+                    }
+                </div>
+            </div>
+            <div class="d-ipad">
+                <div class="list-gallery">
+                    @{
+                        if (albumItems != null && albumItems.Any())
+                        {
+                            foreach (Album item in albumItems)
+                            {
+                                var sumGalleryImages = item.ListImage.ToList(); ;
+                                var sumGridGallery = Math.Ceiling(Convert.ToDecimal(sumGalleryImages.Count) / sliderImages);
+                                var sunGalleryUrl = sumGalleryImages.Select(x => x.LocalCrops.Src).ToList();
+                                var galleryJson = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(sunGalleryUrl);
+                                int index = 0;
+                                <div class="grid-gallery">
+
+                                    @for (int i = 1; i <= sumGridGallery; i++)
+                                    {
+                                        int numberOfGallerys = 0;
+                                        numberOfGallerys = sliderImages;
+                                        if (numberOfGallerys >= sumGalleryImages.Count())
+                                        {
+                                            numberOfGallerys = sumGalleryImages.Count();
+                                        }
+                                        var pagedGallerysItem = sumGalleryImages.Skip((i - 1) * sliderImages).Take(numberOfGallerys).ToList();
+                                        <div class="gallery-item">
+                                            <ul class="gallery-item-list">
+                                                <!-- packages item -->
+                                                @{
+                                                    int order = 1;
+
+                                                }
+                                                @foreach (var urlGallery in pagedGallerysItem)
+                                                {
+                                                    string cropImages = "gallery";
+                                                    if (order % 2 == 0)
+                                                    {
+                                                        cropImages = "galleryImages";
+                                                    }
+                                                    <li class="liveshow gallery-item gallery-@(index)">
+                                                        <span class="lazy-bg gallery-img work-details-popup" data-list-image="@(galleryJson)" data-idx="@index">
+                                                            <img class="lazyload" data-loading="lazy" src="~/Media/loading.gif" data-src="@(urlGallery?.GetLocalCropUrl(cropImages))" alt="" />
+                                                        </span>
+                                                    </li>
+                                                    order++;
+                                                    index++;
+                                                }
+
+                                                <!-- end packages item -->
+
+                                            </ul>
+                                        </div>
+                                    }
+
+                                </div>
+
+                            }
+                        }
+                    }
+                </div>
+            </div>
+            <div class="d-mobile">
+                <div class="list-gallery">
+
+                    @{ if (albumItems != null && albumItems.Any())
+                        {
+                            foreach (Album item in albumItems)
+                            {
+                                var sumGalleryImages = item.ListImage.ToList();
+                                int index = 0;
+                                var sunGalleryUrl = sumGalleryImages.Select(x => x.LocalCrops.Src).ToList();
+                                var galleryJson = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(sunGalleryUrl);
+                                <div class="swiper-container">
+                                    <div class="swiper-wrapper">
+                                        @foreach (var urlAlbum in sumGalleryImages)
+                                        {
+                                            <div class="swiper-slide">
+                                                <span class="lazy-bg gallery-img work-details-popup" data-list-image="@(galleryJson)" data-idx="@index">
+                                                    <img class="lazyload" data-loading="lazy" src="~/Media/loading.gif" data-src="@(urlAlbum?.GetLocalCropUrl("galleryImages"))" alt="" />
+                                                </span>
+                                            </div>
+                                            index++;
+                                        }
+                                    </div>
+                                    <div class="siwper-button">
+                                        <div class="swiper-next">
+                                            @Umbraco.GetDictionaryValue("Next").ToFirstUpper()@Html.Raw("&nbsp&nbsp")<i class="fa fa-arrow-right"></i>
+                                        </div>
+                                        <div class="swiper-prev">
+                                            <i class="fa fa-arrow-left">@Html.Raw("&nbsp&nbsp")</i><span>@Umbraco.GetDictionaryValue("Paging.Previous").ToFirstUpper()</span>
+                                        </div>
+                                    </div>
+
+                                </div> }
+                        } }
+
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+}

@@ -1,0 +1,65 @@
+﻿@inherits UmbracoViewPage
+@using _21_CS_NH.Infrastructure;
+@{
+    int pageSize = ViewBag.PageSize;
+    int pageNumber = ViewBag.PageNumber;
+
+    var allItem = Model.Children().Where(x => x.IsVisible()).OrderByDescending(x => x.CreateDate);
+    var totalItemCount = allItem.Count();
+    var pageCount = totalItemCount > 0 ? Math.Ceiling((double)totalItemCount / pageSize) : 1;
+
+    int individualPagesDisplayedCount = 3;
+    int firstIndividualPageIndex = QueryStringHelper.GetFirstIndividualPageIndex(individualPagesDisplayedCount, int.Parse(pageCount.ToString()), pageNumber);
+    int lastIndividualPageIndex = QueryStringHelper.GetLastIndividualPageIndex(individualPagesDisplayedCount, int.Parse(pageCount.ToString()), pageNumber);
+}
+
+@if (pageCount > 1)
+{
+    <div class="row">
+        <div class="col-12">
+            <nav class="text-center">
+                <ul class="pagination d-inline-flex">
+                    @if (pageNumber > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@(Model.Url() + "?page=" + (pageNumber - 1))">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="javascript:;">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+
+                    }
+                    @for (int i = firstIndividualPageIndex; i <= lastIndividualPageIndex; i++)
+                    {
+                        <li class="page-item @(pageNumber == i + 1 ? " active" : null)">
+                            <a class="page-link" href="@(pageNumber == i + 1 ? " javascript:;" : Model.Url() + "?page=" + (i + 1) )">@(i + 1)</a>
+                        </li>
+                    }
+                    @if ((pageNumber) < pageCount)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@(Model.Url() + "?page=" + (pageNumber + 1))">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="javascript:;">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+}

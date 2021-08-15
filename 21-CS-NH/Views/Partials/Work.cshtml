@@ -1,0 +1,37 @@
+﻿@inherits UmbracoViewPage
+@{
+    var settings = (Settings)Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias.Equals("settings"));
+    Work work = Model.Root().DescendantsOrSelf<Work>().FirstOrDefault();
+}
+
+@if (work != null)
+{
+    string title = !string.IsNullOrWhiteSpace(work.Title) ? work.Title : work.Name;
+
+    <section id="work" class="lazy-bg">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="">
+                    @Umbraco.GetDictionaryValue("Article.Work")
+                </h2>
+            </div>
+            <div class="row">
+                <div id="video" class="m-auto">
+                    <div class="ratio">
+                        @Html.Raw(work.VideoEmbed)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                @foreach (var item in settings.SocialLinks)
+                {
+                    <div class="col-4 m-auto text-center pb-2">
+                        <a class="link-item" href="@item.Link.Url" target="@item.Link.Target">
+                            <img data-loading="lazy" src="~/Media/blank.png?format=webp&width=120" data-src="@item.Logo.LocalCrops.Src?format=webp&width=120" alt="@item.Link.Name" />
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}

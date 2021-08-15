@@ -1,0 +1,30 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<Home>
+@using ClientDependency.Core.Mvc
+@using _21_CS_NH.ViewModel;
+
+@{
+    Html.RequiresCss("~/vendor/slick/css/slick.css");
+    Html.RequiresCss("~/vendor/slick/css/slick-theme.css");
+    Html.RequiresCss("~/vendor/swiper/swiper-bundle.css");
+    Html.RequiresCss("~/vendor/magnific/css/magnific-popup.css");
+
+
+    Html.RequiresJs("~/vendor/jquery/jquery.min.js");
+    Html.RequiresJs("~/vendor/slick/js/slick.min.js");
+    Html.RequiresJs("~/vendor/slick/js/main.js");
+    Html.RequiresJs("~/vendor/magnific/js/jquery.magnific-popup.min.js");
+    Html.RequiresJs("~/vendor/magnific/js/gallery.js");
+    Html.RequiresJs("~/vendor/swiper/swiper-bundle.js");
+    Html.RequiresJs("~/vendor/swiper/lazysizes.min.js");
+    Layout = "Master.cshtml";
+}
+
+@Html.Partial("~/Views/Partials/pageHeader.cshtml", new PageHeaderViewModel(Model.Name, Model.Title, Model.MainImage, alias: Model.ContentType.Alias))
+
+@Html.Partial("~/Views/Partials/Story.cshtml")
+
+@Html.Partial("~/Views/Partials/Album.cshtml")
+
+@Html.Partial("~/Views/Partials/Work.cshtml")
+
+@Html.Partial("~/Views/Partials/LatestNews.cshtml")

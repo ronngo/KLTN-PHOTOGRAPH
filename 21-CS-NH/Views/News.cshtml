@@ -1,0 +1,26 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.News>
+@using ContentModels = Umbraco.Web.PublishedModels;
+@using _21_CS_NH.ViewModel;
+@{
+    Layout = "Master.cshtml";
+    var home = (Home)Model.Root();
+    var news = (NewsList)home.Children.FirstOrDefault(x => x.ContentType.Alias.Equals("newsList"));
+}
+
+@Html.Partial("~/Views/Partials/pageHeader.cshtml", new PageHeaderViewModel(Model.Name, Model.Title, Model.MainImage, Model.AuthorName ?? Model.CreatorName, Model.CreateDate, Model.ContentType.Alias))
+
+<section id="news">
+    <div class="container">
+        <p class="breadcrumb01"><a href="@home.Url"><span>@home.Title</span></a><span> / </span><a href="@news.Url">@news.Title</a><span> / </span><span class="activated">@Model.Title</span></p>
+        <article id="newdetails">
+            <p class="shortContent">
+                @Model.Subtitle
+            </p>
+            <div class="content_detail">
+                @Model.MainContent
+            </div>
+        </article>
+    </div>
+</section>
+
+@Html.Partial("~/Views/Partials/LatestNews.cshtml")
